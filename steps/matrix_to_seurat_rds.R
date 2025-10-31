@@ -16,26 +16,29 @@ library(Seurat)
 library(tidyverse)
 
 args <- commandArgs(T)
+if (length(args) < 4) {
+    stop("USAGE: Rscript matrix_to_seurat_rds.R sample_name count_matrix_path.tsv barcode_path.tsv out_file.rds [meta_data_path.csv]\n")
+}
 sample <- args[1]
 count_matrix_path <- args[2]
 barcode_path <- args[3]
 out <- args[4]
-meta_data_path <- args[5]
+meta_data_path <- if (length(args) >= 5) args[5] else NA
 
 usage <- str_c(
-    "USEAGE:\n",
-    "\tRscript ",args[0]," sample_name count_matrix_path.tsv barcode_path.tsv out_file.rds [meta_data_path.csv]",
+    "USAGE:\n",
+    "\tRscript matrix_to_seurat_rds.R sample_name count_matrix_path.tsv barcode_path.tsv out_file.rds [meta_data_path.csv]",
     "\n",
     "\tmeta_data_path: meta.data is formatted as CSV, which should have a cell name column named 'CN' that is the same as the cell name in the barcode file."
-    )
+)
 
 # check
 if (!file.exists(count_matrix_path))
-    stop(str_c("ERROR: canot find count matrix: ", count_matrix_path, "\n\n", usage))
+    stop(str_c("ERROR: cannot find count matrix: ", count_matrix_path, "\n\n", usage))
 if (!file.exists(barcode_path))
-    stop(str_c("ERROR: canot find barcode: ", barcode_path, "\n\n", usage))
-if (!is.na(meta_data_path) & !file.exists(meta_data_path, "\n\n", usage))
-    stop(str_c("ERROR: canot find meta data: ", meta_data_path, "\n\n", usage))
+    stop(str_c("ERROR: cannot find barcode: ", barcode_path, "\n\n", usage))
+if (!is.na(meta_data_path) && !file.exists(meta_data_path))
+    stop(str_c("ERROR: cannot find meta data: ", meta_data_path, "\n\n", usage))
 
 message(str_c(
     "NOTE: transform count matrix to Seurat obj!\n",

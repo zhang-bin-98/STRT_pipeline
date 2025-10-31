@@ -112,7 +112,7 @@ cat >${pbs} <<-EOF
         2>&1 |
     tee ${mapping_dir}/${sample}.log
 
-    time ${perl} ${cell_mapping_ratio} \\
+    time ${perl} ${STRT_cell_mapping_ratio} \\
         -w ${thread} \\
         -r1 ${qc_dir}/${sample}_R1_trimmed.fq.gz \\
         -b ${mapping_dir}/${sample}_Aligned.sortedByCoord.out.bam \\
@@ -148,14 +148,14 @@ cat >${pbs} <<-EOF
 
     echo "06 matrix to seurat rds \`date\` !"
 
-    time ${Rscript} ${STRT_cell_mapping_ratio} \\
+    time ${Rscript} ${matrix_to_seurat_rds} \\
         ${sample} \\
         ${matrix_dir}/${sample}_count_matrix.tsv \\
         ${barcode} \\
-        ${matrix_dir}/${sample}.rds \\ 
+        ${matrix_dir}/${sample}.rds \\
         ${mapping_dir}/${sample}_cell_mapping_ratio.tsv \\
         2>&1 |
-    tee ${matrix_dir}/${sample}_seurart.log
+    tee ${matrix_dir}/${sample}_seurat.log
 
     echo "end \`date\` !"
 
